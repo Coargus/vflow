@@ -1,3 +1,3 @@
-"""Define Module 2."""
+"""Package containing Enums."""
 
 from __future__ import annotations
