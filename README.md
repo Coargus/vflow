@@ -1,46 +1,40 @@
-# Python-Project-Template
+# vflow: Video Processing Library
 
-This is a template repository. Please initialize your python project using this template.
+vflow is a Python library for efficient video processing and frame extraction.
 
-### 1. Verify and Update Python Version
-Ensure that the correct version of Python is installed on your local system. Update the Python version in the following configuration files:
-- `.github/workflows/*.yml`
-- `pyproject.toml`
+## Features
 
-### 2. Project Package Name
-Replace `project_name` with your actual project package name, which should include the `src` directory.
+- Read video files (currently supports MP4)
+- Extract video metadata
+- Frame-by-frame processing
+- Flexible frame extraction methods:
+  - By desired FPS
+  - By time interval
 
-### 3. Setting Up CI/CD for Release
-To enable Continuous Integration and Continuous Deployment (CI/CD) for releasing your software, follow these steps:
-
-- Configure `CI_CD_TOKEN` as a secret variable through the Actions Settings in your repository.
-- To release, add a tag to your repository by executing the following commands:
+## Installation
 ```
-git tag -a v0.0.1 -m "Release version 0.0.1"
-git push origin v0.0.1
+pip install -e .
 ```
-## Installing and Using the Package
 
-You can install the package locally from the top-level directory:
+## Quick Start
 ```python
-python -m pip install --upgrade pip build
-python -m build
-python -m pip install .
-```
+import vflow
+# Read video
+video = vflow.read_video("path/to/your/video.mp4")
+# Get video info
+print(video.get_video_info)
 
-Distribute
-If you want others to install your package via pip directly, you can upload it to PyPI. This requires an account on PyPI and then you can upload using Twine:
-```
-python -m pip install --upgrade twine
-twine upload dist/*
-```
-
-## Ruff Usage
-Here is how you might proceed with checking for issues:
-```
-ruff check .
-```
-If you need to fix issues automatically and if ruff supports it, you would typically see an option like `--fix` mentioned in the documentation or help command:
-```
-ruff check --fix .
+# Extract frames at 2 FPS
+frames = video.get_all_frames_of_video(desired_fps=2)
+# Or extract frames every 2 seconds
+frames = video.get_all_frames_of_video(desired_interval_in_sec=2)
+# Process frames one by one
+while True:
+    frame_img: np.ndarray = video.get_next_frame(
+        return_format="ndarray",
+        desired_interval_in_sec=1,
+    )
+    if frame_img is None:
+        break  # No more frames or end of video
+    print(f"Getting frame : {frame_count}")  # noqa: T201
 ```
