@@ -1,7 +1,7 @@
-import vflow
+import vflow  # noqa: INP001
 
 # 1. Define video path
-video_path = "/home/mc76728/repo/Coargus/multimodal-agentic-reasoning-system/tests/sample_data/sample-5s.mp4"
+video_path = "YOUR VIDEO PATH"
 
 # 2. Define Video Object
 # This creates a video object that we can use to extract information and frames
@@ -18,7 +18,7 @@ print(f"Number of frames (FPS method): {len(fps_frames)}")  # noqa: T201
 print("\nVideo info after processing:")  # noqa: T201
 print(video.get_video_info)  # noqa: T201
 
-print("--------------------------------------")
+print("--------------------------------------")  # noqa: T201
 video = vflow.read_video(video_path)
 # 5. Get and print video info before processing
 # This shows the original metadata of the video

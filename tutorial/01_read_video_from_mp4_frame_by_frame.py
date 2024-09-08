@@ -1,4 +1,4 @@
-import logging
+import logging  # noqa: INP001
 
 import numpy as np
 
@@ -8,7 +8,7 @@ import vflow
 logging.basicConfig(level=logging.INFO)
 
 # 1. Define video path
-video_path = "/home/mc76728/repo/Coargus/multimodal-agentic-reasoning-system/tests/sample_data/sample-5s.mp4"
+video_path = "<YOUR VIDEO PATH>"
 
 # 2. Define Video Object
 video = vflow.read_video(video_path)

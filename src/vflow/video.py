@@ -3,11 +3,13 @@
 from __future__ import annotations
 
 import logging
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 import cv2
 import numpy as np
 
+if TYPE_CHECKING:
+    from pathlib import Path
 from vflow.data_schema.video_info import VideoInfo
 from vflow.enum.video_format import VideoFormat
 
@@ -103,7 +105,10 @@ class Video:
             and desired_fps is None
             and desired_interval_in_sec is None
         ):
-            msg = "Either desired_fps or desired_interval_in_sec must be provided."
+            msg = (
+                "Either desired_fps",
+                "or desired_interval_in_sec must be provided.",
+            )
             raise ValueError(msg)
 
         if desired_fps is not None:
@@ -149,17 +154,22 @@ class Video:
                 - [cv2, ndarray]
             frame_scale (int | None, optional): Frame scale. Defaults to None.
             desired_fps (int | None, optional): Desired FPS. Defaults to None.
-            desired_interval_in_sec (int | None, optional): Desired interval. Defaults to None.
+            desired_interval_in_sec (int | None, optional): Desired interval.
+                Defaults to None.
 
         Returns:
-            np.ndarray | None: The next frame as an ndarray, or None if no more frames are available or the video ended.
+            np.ndarray | None: The next frame as an ndarray, or None if no more
+                frames are available or the video ended.
         """
         if (
             self._read_format == VideoFormat.MP4
             and desired_fps is None
             and desired_interval_in_sec is None
         ):
-            msg = "Either desired_fps or desired_interval_in_sec must be provided."
+            msg = (
+                "Either desired_fps or",
+                "desired_interval_in_sec must be provided.",
+            )
             raise ValueError(msg)
 
         if self.video_info.video_ended:

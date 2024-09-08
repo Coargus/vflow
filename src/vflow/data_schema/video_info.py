@@ -14,7 +14,7 @@ class VideoInfo:
     frame_height: int
     original_fps: float
     original_frame_count: int
-    id: uuid.UUID = field(default_factory=uuid.uuid4)
+    video_id: uuid.UUID = field(default_factory=uuid.uuid4)
     processed_fps: float | None = None
     processed_frame_count: int | None = None
     current_frame_index: int = 0
