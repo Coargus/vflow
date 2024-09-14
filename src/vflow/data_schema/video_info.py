@@ -8,14 +8,12 @@ from vflow.enum.video_format import VideoFormat
 class VideoInfo:
     """Represents information about a video file."""
 
-    video_path: str
     format: VideoFormat
     frame_width: int
     frame_height: int
-    original_fps: float
     original_frame_count: int
     video_id: uuid.UUID = field(default_factory=uuid.uuid4)
+    video_path: str | None = None
     processed_fps: float | None = None
-    processed_frame_count: int | None = None
-    current_frame_index: int = 0
-    video_ended: bool = False
+    processed_frame_count: int = 1
+    original_fps: float | None = None

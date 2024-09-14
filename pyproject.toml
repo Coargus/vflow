@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "vflow"
-version = "v0.0.2-dev"
+version = "v0.0.3-dev"
 description = "A package description"
 authors = [{ name = "Minkyu Choi", email = "minkyu.choi@coargus.com" }]
 license = { file = "LICENSE" }
