@@ -6,6 +6,7 @@ import logging
 from typing import TYPE_CHECKING
 
 import cv2
+from PIL import Image
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -60,6 +61,9 @@ class Video:
         logging.info(f"Video format: {self._read_format}")
         if self._read_format == VideoFormat.MP4:
             self._cap = cv2.VideoCapture(video_path)
+            ret, _ = self._cap.read()
+            if not ret:
+                logging.error("Video path is invalid.")
             self.video_info = VideoInfo(
                 video_path=str(self._video_path),
                 format=self._read_format,
@@ -100,7 +104,7 @@ class Video:
 
     def get_all_frames_of_video(
         self,
-        return_format: str = "cv2",
+        return_format: str = "ndarray",
         frame_scale: int | None = None,
         desired_fps: int | None = None,
         desired_interval_in_sec: int | None = None,
@@ -115,7 +119,7 @@ class Video:
             desired_interval_in_sec (int | None, optional): Interval between frames in seconds.
                 If provided, frames will be extracted at this interval. Defaults to None.
         """  # noqa: E501
-        if self._read_format == VideoFormat.MP4:
+        if self._read_format == VideoFormat.LIST_OF_ARRAY:
             resize_func = (  # noqa: E731
                 lambda img: self.process_frame_image(
                     frame_img=img,
@@ -146,23 +150,23 @@ class Video:
                 desired_interval_in_sec=desired_interval_in_sec,
             )
 
-        for real_frame_idx in range(
-            0, int(self.video_info.original_frame_count), int(frame_step)
-        ):
-            self._cap.set(cv2.CAP_PROP_POS_FRAMES, real_frame_idx)
-            ret, frame_img = self._cap.read()
-            frame_img = cv2.cvtColor(frame_img, cv2.COLOR_BGR2RGB)
-            if not ret:
-                break
-            frame_img = self.process_frame_image(
-                frame_img=frame_img,
-                frame_scale=frame_scale,
-                return_format=return_format,
-            )
-            all_frames.append(frame_img)
-        self._cap.release()
-        cv2.destroyAllWindows()
-        self.processed_frame_count = len(all_frames)
+            for real_frame_idx in range(
+                0, int(self.video_info.original_frame_count), int(frame_step)
+            ):
+                self._cap.set(cv2.CAP_PROP_POS_FRAMES, real_frame_idx)
+                ret, frame_img = self._cap.read()
+                frame_img = cv2.cvtColor(frame_img, cv2.COLOR_BGR2RGB)
+                if not ret:
+                    break
+                frame_img = self.process_frame_image(
+                    frame_img=frame_img,
+                    frame_scale=frame_scale,
+                    return_format=return_format,
+                )
+                all_frames.append(frame_img)
+            self._cap.release()
+            # cv2.destroyAllWindows()
+            self.processed_frame_count = len(all_frames)
         return all_frames
 
     def get_next_frame(
@@ -176,7 +180,7 @@ class Video:
 
         Args:
             return_format (str, optional): Return format. Defaults to "ndarray".
-                - [cv2, ndarray]
+                - [cv2, ndarray, pil]
             frame_scale (int | None, optional): Frame scale. Defaults to None.
             desired_fps (int | None, optional): Desired FPS. Defaults to None.
             desired_interval_in_sec (int | None, optional): Desired interval.
@@ -198,6 +202,7 @@ class Video:
             raise ValueError(msg)
 
         if self.video_ended:
+            logging.info("No frame available.")
             return None  # No more frames to process
 
         if self._read_format == VideoFormat.MP4:
@@ -256,9 +261,8 @@ class Video:
         """
         if frame_scale is not None:
             frame_img = self._resize_frame_by_scale(frame_img, frame_scale)
-        if return_format == "PIL.Image":
-            # TODO: Convert to PIL.Image
-            pass
+        if return_format == "pil":
+            frame_img = Image.fromarray(frame_img).convert("RGB")
         return frame_img
 
     def get_frame_step(
